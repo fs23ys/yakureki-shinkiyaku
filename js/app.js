@@ -113,18 +113,17 @@
     });
   }
 
+  // 「あ」と打ったら「あ」で始まる薬品名だけに絞りたい(途中に「あ」を含むだけの
+  // 薬品まで出てくると探しにくいため)、前方一致(先頭が一致するか)で判定する。
   function matchesQuery(text, query) {
-    return toSearchKey(text).indexOf(toSearchKey(query)) !== -1;
+    return toSearchKey(text).indexOf(toSearchKey(query)) === 0;
   }
 
   function highlightMatch(title, query) {
-    if (!query) return escapeHtml(title);
-    var idx = toSearchKey(title).indexOf(toSearchKey(query));
-    if (idx === -1) return escapeHtml(title);
+    if (!query || !matchesQuery(title, query)) return escapeHtml(title);
     return (
-      escapeHtml(title.slice(0, idx)) +
-      '<mark>' + escapeHtml(title.slice(idx, idx + query.length)) + '</mark>' +
-      escapeHtml(title.slice(idx + query.length))
+      '<mark>' + escapeHtml(title.slice(0, query.length)) + '</mark>' +
+      escapeHtml(title.slice(query.length))
     );
   }
 

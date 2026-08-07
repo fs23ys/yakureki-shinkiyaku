@@ -104,9 +104,22 @@
     }).join('\n');
   }
 
+  // ひらがなで検索しても(例:「あむろ」)カタカナの薬品名(「アムロジピン」)に
+  // ヒットするよう、比較用にひらがなをカタカナへ正規化する(1文字ずつの変換なので
+  // 文字数・位置は元の文字列と対応したままになる)。
+  function toSearchKey(str) {
+    return str.toLowerCase().replace(/[ぁ-ゖ]/g, function (ch) {
+      return String.fromCharCode(ch.charCodeAt(0) + 0x60);
+    });
+  }
+
+  function matchesQuery(text, query) {
+    return toSearchKey(text).indexOf(toSearchKey(query)) !== -1;
+  }
+
   function highlightMatch(title, query) {
     if (!query) return escapeHtml(title);
-    var idx = title.toLowerCase().indexOf(query.toLowerCase());
+    var idx = toSearchKey(title).indexOf(toSearchKey(query));
     if (idx === -1) return escapeHtml(title);
     return (
       escapeHtml(title.slice(0, idx)) +
@@ -265,7 +278,7 @@
     }
 
     var filtered = query
-      ? state.drugList.filter(function (d) { return d.bareName.toLowerCase().indexOf(query.toLowerCase()) !== -1; })
+      ? state.drugList.filter(function (d) { return matchesQuery(d.bareName, query); })
       : state.drugList;
 
     if (filtered.length === 0) {

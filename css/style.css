@@ -318,58 +318,35 @@ body {
   padding: 0;
 }
 
-/* あ行・か行…の区切り見出し */
+/* あ行・か行…の区切り見出し(##S##等のマーカーバッジと同じ、色塗り角丸ピル+白文字) */
 .kana-row-header {
   position: sticky;
-  top: 0;
+  top: 0.5rem;
   z-index: 1;
-  margin: 0;
-  padding: 0.4rem 0.7rem;
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: var(--color-accent);
-  background: var(--color-bg);
-  border-bottom: 1px solid var(--color-border);
+  display: inline-block;
+  margin: 0.8rem 0 0.5rem;
+  padding: 0.2rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #fff;
+  background: var(--color-accent);
 }
 
-/* あ行・か行…見出しの行別パステルカラー(dataviz色分けガイドラインで検証済み) */
-.kana-row-header.row-a  { color: #d1445f; }
-.kana-row-header.row-ka { color: #2f8fd9; }
-.kana-row-header.row-sa { color: #c66a2a; }
-.kana-row-header.row-ta { color: #1a7fb0; }
-.kana-row-header.row-na { color: #c94f8f; }
-.kana-row-header.row-ha { color: #4f9e5c; }
-.kana-row-header.row-ma { color: #9a5fd1; }
-.kana-row-header.row-ya { color: #8f7a00; }
-.kana-row-header.row-ra { color: #5a6fea; }
-.kana-row-header.row-wa { color: #a05a3a; }
-.kana-row-header.row-tsumura { color: #7a6a1f; }
-
-:root[data-theme="dark"] .kana-row-header.row-a  { color: #d1607a; }
-:root[data-theme="dark"] .kana-row-header.row-ka { color: #4a95d9; }
-:root[data-theme="dark"] .kana-row-header.row-sa { color: #d17a3f; }
-:root[data-theme="dark"] .kana-row-header.row-ta { color: #2a90c7; }
-:root[data-theme="dark"] .kana-row-header.row-na { color: #d1568f; }
-:root[data-theme="dark"] .kana-row-header.row-ha { color: #4f9e5f; }
-:root[data-theme="dark"] .kana-row-header.row-ma { color: #a175d1; }
-:root[data-theme="dark"] .kana-row-header.row-ya { color: #a88a1a; }
-:root[data-theme="dark"] .kana-row-header.row-ra { color: #7580d1; }
-:root[data-theme="dark"] .kana-row-header.row-wa { color: #c17a48; }
-:root[data-theme="dark"] .kana-row-header.row-tsumura { color: #c2ab4a; }
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .kana-row-header.row-a  { color: #d1607a; }
-  :root:not([data-theme="light"]) .kana-row-header.row-ka { color: #4a95d9; }
-  :root:not([data-theme="light"]) .kana-row-header.row-sa { color: #d17a3f; }
-  :root:not([data-theme="light"]) .kana-row-header.row-ta { color: #2a90c7; }
-  :root:not([data-theme="light"]) .kana-row-header.row-na { color: #d1568f; }
-  :root:not([data-theme="light"]) .kana-row-header.row-ha { color: #4f9e5f; }
-  :root:not([data-theme="light"]) .kana-row-header.row-ma { color: #a175d1; }
-  :root:not([data-theme="light"]) .kana-row-header.row-ya { color: #a88a1a; }
-  :root:not([data-theme="light"]) .kana-row-header.row-ra { color: #7580d1; }
-  :root:not([data-theme="light"]) .kana-row-header.row-wa { color: #c17a48; }
-  :root:not([data-theme="light"]) .kana-row-header.row-tsumura { color: #c2ab4a; }
-}
+/* あ行・か行…見出しの行別パステルカラー(dataviz色分けガイドラインで検証済み、
+   ##S##等のマーカーバッジと同様にライト/ダーク共通の固定色を使う) */
+.kana-row-header.row-a       { background: #d1445f; }
+.kana-row-header.row-ka      { background: #2f8fd9; }
+.kana-row-header.row-sa      { background: #c66a2a; }
+.kana-row-header.row-ta      { background: #1a7fb0; }
+.kana-row-header.row-na      { background: #c94f8f; }
+.kana-row-header.row-ha      { background: #4f9e5c; }
+.kana-row-header.row-ma      { background: #9a5fd1; }
+.kana-row-header.row-ya      { background: #8f7a00; }
+.kana-row-header.row-ra      { background: #5a6fea; }
+.kana-row-header.row-wa      { background: #a05a3a; }
+.kana-row-header.row-tsumura { background: #7a6a1f; }
 
 .drug-item {
   border-bottom: 1px solid var(--color-border);

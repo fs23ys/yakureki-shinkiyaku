@@ -343,6 +343,7 @@ body {
 .kana-row-header.row-ya { color: #8f7a00; }
 .kana-row-header.row-ra { color: #5a6fea; }
 .kana-row-header.row-wa { color: #a05a3a; }
+.kana-row-header.row-tsumura { color: #7a6a1f; }
 
 :root[data-theme="dark"] .kana-row-header.row-a  { color: #d1607a; }
 :root[data-theme="dark"] .kana-row-header.row-ka { color: #4a95d9; }
@@ -354,6 +355,7 @@ body {
 :root[data-theme="dark"] .kana-row-header.row-ya { color: #a88a1a; }
 :root[data-theme="dark"] .kana-row-header.row-ra { color: #7580d1; }
 :root[data-theme="dark"] .kana-row-header.row-wa { color: #c17a48; }
+:root[data-theme="dark"] .kana-row-header.row-tsumura { color: #c2ab4a; }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .kana-row-header.row-a  { color: #d1607a; }
@@ -366,6 +368,7 @@ body {
   :root:not([data-theme="light"]) .kana-row-header.row-ya { color: #a88a1a; }
   :root:not([data-theme="light"]) .kana-row-header.row-ra { color: #7580d1; }
   :root:not([data-theme="light"]) .kana-row-header.row-wa { color: #c17a48; }
+  :root:not([data-theme="light"]) .kana-row-header.row-tsumura { color: #c2ab4a; }
 }
 
 .drug-item {

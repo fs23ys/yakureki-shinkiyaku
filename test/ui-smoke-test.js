@@ -1,8 +1,9 @@
 /**
  * ブラウザ実操作によるUIスモークテスト(Playwright)。
- * index.html を file:// で開き、実際のサンプルHTML(data/template.html)を取り込んで
+ * index.html を file:// で開き、実際のサンプルHTML(薬歴新規.html)を取り込んで
  * あ行・か行見出し付きの薬品名一覧(左)+詳細パネル(右)のマスター・ディテール表示・
- * 検索・選択・コピー・複数文脈のブロック分割・ダークモードが動作するか確認する。
+ * 検索・選択・コピー・H3用途分岐のブロック分割・ツムラ(漢方)セクション・
+ * ダークモードが動作するか確認する。
  *
  * 実行方法: node test/ui-smoke-test.js
  */
@@ -39,7 +40,7 @@ var INDEX_PATH = 'file://' + path.join(__dirname, '..', 'index.html').replace(/\
 
   console.log('');
   console.log('[2] サンプルHTMLファイルを手動で取り込む(あ行・か行見出し付きの薬品名一覧になる)');
-  var SAMPLE_PATH = path.join(__dirname, '..', '薬歴新規薬.html');
+  var SAMPLE_PATH = path.join(__dirname, '..', '薬歴新規.html');
   await page.locator('#updateArea summary').click();
   await page.locator('#fileInput').setInputFiles(SAMPLE_PATH);
   await page.waitForSelector('.drug-item');
@@ -48,14 +49,16 @@ var INDEX_PATH = 'file://' + path.join(__dirname, '..', 'index.html').replace(/\
   check('薬品エントリが99件表示される(重複統合後)', drugCount === 99);
   var rowHeaderCount = await page.locator('.kana-row-header').count();
   console.log('  あ行・か行…見出しの件数: ' + rowHeaderCount);
-  check('行見出しが7件(あ→か→さ→た→は→ま→ら)', rowHeaderCount === 7);
+  check('行見出しが8件(あ→か→さ→た→は→ま→ら→ツムラ)', rowHeaderCount === 8);
   var firstRowHeaderText = await page.locator('.kana-row-header').first().textContent();
   check('最初の行見出しが「あ行」', firstRowHeaderText.indexOf('あ行') !== -1);
+  var lastRowHeaderText = await page.locator('.kana-row-header').last().textContent();
+  check('最後の行見出しが「ツムラ(漢方)」', lastRowHeaderText.indexOf('ツムラ') !== -1);
   var statusText = await page.locator('#statusMessage').textContent();
   check('取り込み成功のステータスメッセージが表示される', statusText.indexOf('取り込みました') !== -1);
 
   console.log('');
-  console.log('[3] 通常の薬品(1文脈)を選択する');
+  console.log('[3] 通常の薬品(単一ブロック)を選択する');
   var esz = page.locator('.drug-item', { hasText: 'エスゾピクロン' }).first().locator('.drug-row');
   await esz.click();
   await page.waitForSelector('#detailPane .preview-text');
@@ -63,7 +66,7 @@ var INDEX_PATH = 'file://' + path.join(__dirname, '..', 'index.html').replace(/\
   check('詳細パネルのタイトルが薬品名になる', detailTitle.trim() === 'エスゾピクロン');
   var detailText = await page.locator('#detailPane .preview-text').first().textContent();
   check('詳細パネルの内容が##S##から始まる', detailText.indexOf('##S##') === 0);
-  check('区別ラベル(preview-block-title)は表示されない(単一文脈・単一ブロックのため)',
+  check('区別ラベル(preview-block-title)は表示されない(単一ブロックのため)',
     await page.locator('#detailPane .preview-block-title').count() === 0);
   var selectedCount = await page.locator('.drug-item.selected').count();
   check('選択した薬品の行がハイライトされる', selectedCount === 1);
@@ -80,22 +83,24 @@ var INDEX_PATH = 'file://' + path.join(__dirname, '..', 'index.html').replace(/\
   check('クリップボードの内容が##S##で始まる(実際にコピーされている)', clipboardText.indexOf('##S##') === 0);
 
   console.log('');
-  console.log('[5] 複数文脈(①②③)がある薬品(ロキソプロフェン)を選択すると、区別ラベル付きで複数ブロックに分かれる');
-  await page.locator('#searchInput').fill('ロキソプロフェン');
+  console.log('[5] H2自身に本文が無く、配下のH3に用途分岐が複数ある薬品(メコバラミン)を選択すると、見出し付きで分けて表示される');
+  console.log('    (メコバラミンは耳鼻科用薬(単一ブロック)とビタミン剤(3分岐)にまたがる重複薬品でもあるため、合計4ブロックになる)');
+  await page.locator('#searchInput').fill('メコバラミン');
   await page.waitForTimeout(100);
-  var loxoRow = page.locator('.drug-item', { hasText: 'ロキソプロフェン' }).first();
-  var loxoBadge = await loxoRow.locator('.drug-context-badge').textContent();
-  check('一覧の薬品行に文脈数バッジ(3件)が表示される', loxoBadge.indexOf('3件') !== -1);
-  await loxoRow.locator('.drug-row').click();
+  var mecoRow = page.locator('.drug-item', { hasText: 'メコバラミン' }).first();
+  var mecoBadge = await mecoRow.locator('.drug-context-badge').textContent();
+  check('一覧の薬品行に合計ブロック件数バッジ(4件)が表示される', mecoBadge.indexOf('4件') !== -1);
+  await mecoRow.locator('.drug-row').click();
   await page.waitForSelector('#detailPane .preview-block');
-  var loxoBlockCount = await page.locator('#detailPane .preview-block').count();
-  console.log('  ロキソプロフェンのブロック数: ' + loxoBlockCount);
-  check('①新規(3分岐)+②胃弱者向け(1)+③頓服(1)で合計5ブロックに分かれる', loxoBlockCount === 5);
+  var mecoBlockCount = await page.locator('#detailPane .preview-block').count();
+  console.log('  メコバラミンのブロック数: ' + mecoBlockCount);
+  check('耳鼻科用薬(1)+（１）手のしびれ／（２）痛み／（３）VB12不足(3)の合計4ブロックに分かれる', mecoBlockCount === 4);
   var blockTitles = await page.locator('#detailPane .preview-block-title').allTextContents();
   console.log('  ブロックラベル: ' + blockTitles.join(' / '));
-  check('シナリオ区分(①②③)がラベルに含まれる', blockTitles.some(function (t) { return t.indexOf('①') !== -1; }));
-  check('薬効分類名(鎮痛薬)はラベルに含まれない(ユーザー指示により非表示)',
-    blockTitles.every(function (t) { return t.indexOf('鎮痛薬') === -1; }));
+  check('各ブロックのラベル(「（１）手のしびれ」等)がコピー内容の上に表示される',
+    blockTitles.some(function (t) { return t.indexOf('（１）') !== -1; }) &&
+    blockTitles.some(function (t) { return t.indexOf('（２）') !== -1; }) &&
+    blockTitles.some(function (t) { return t.indexOf('（３）') !== -1; }));
 
   console.log('');
   console.log('[5.5] ブロックごとに独立してコピーできる(混ざらない)');
@@ -107,26 +112,41 @@ var INDEX_PATH = 'file://' + path.join(__dirname, '..', 'index.html').replace(/\
     (clipboardAfterBlockCopy.match(/##S##/g) || []).length === 1);
 
   console.log('');
-  console.log('[6] 検索フィルタ(検索中は行見出しを出さずフラット表示)');
-  await page.locator('#searchInput').fill('ロキソプロフェン');
+  console.log('[6] ツムラの漢方薬セクション(番号順)');
+  await page.locator('#searchInput').fill('');
+  await page.waitForTimeout(100);
+  var tsumuraNames = await page.locator('.drug-item .drug-title').allTextContents();
+  var tsumuraOnly = tsumuraNames.filter(function (t) { return t.indexOf('ツムラ') !== -1; });
+  console.log('  ツムラ該当: ' + tsumuraOnly.join(' / '));
+  check('ツムラの漢方薬が4件表示される', tsumuraOnly.length === 4);
+  check('ツムラ番号順(1→54→68→77)に並んでいる',
+    tsumuraOnly[0].indexOf('ツムラ1 ') !== -1 &&
+    tsumuraOnly[1].indexOf('ツムラ54') !== -1 &&
+    tsumuraOnly[2].indexOf('ツムラ68') !== -1 &&
+    tsumuraOnly[3].indexOf('ツムラ77') !== -1);
+  check('一覧の一番最後がツムラの漢方薬になっている', tsumuraNames[tsumuraNames.length - 1].indexOf('ツムラ') !== -1);
+
+  console.log('');
+  console.log('[7] 検索フィルタ(検索中は行見出しを出さずフラット表示)');
+  await page.locator('#searchInput').fill('メコバラミン');
   await page.waitForTimeout(100);
   var rowHeaderCountWhileSearch = await page.locator('.kana-row-header').count();
   check('検索中はあ行・か行見出しが表示されない', rowHeaderCountWhileSearch === 0);
   var filteredCount = await page.locator('.drug-item').count();
-  console.log('  「ロキソプロフェン」で絞り込んだ件数: ' + filteredCount);
-  check('検索で1件に絞り込まれる(ロキソプロフェンテープは含まない完全一致ではなく部分一致なので実際は2件になりうる点に注意)', filteredCount >= 1);
+  console.log('  「メコバラミン」で絞り込んだ件数: ' + filteredCount);
+  check('検索で2件に絞り込まれる(メコバラミン単体+メコバラミン+ストミン)', filteredCount === 2);
   var markCount = await page.locator('.drug-item mark').count();
   check('一致部分がハイライトされる', markCount === filteredCount);
 
   console.log('');
-  console.log('[7] 検索欄をクリアするとあ行・か行見出し付き表示に戻る');
+  console.log('[8] 検索欄をクリアするとあ行・か行見出し付き表示に戻る');
   await page.locator('#searchInput').fill('');
   await page.waitForTimeout(100);
   var rowHeaderCountAfterClear = await page.locator('.kana-row-header').count();
-  check('検索クリアで行見出しが7件に戻る', rowHeaderCountAfterClear === 7);
+  check('検索クリアで行見出しが8件に戻る', rowHeaderCountAfterClear === 8);
 
   console.log('');
-  console.log('[8] ダークモード切り替え');
+  console.log('[9] ダークモード切り替え');
   var themeBefore = await page.evaluate(function () { return document.documentElement.getAttribute('data-theme'); });
   await page.locator('#themeToggle').click();
   var themeAfter = await page.evaluate(function () { return document.documentElement.getAttribute('data-theme'); });
@@ -141,7 +161,7 @@ var INDEX_PATH = 'file://' + path.join(__dirname, '..', 'index.html').replace(/\
     await page.locator('.drug-item').count() === 99);
 
   console.log('');
-  console.log('[9] コンソールエラーの確認');
+  console.log('[10] コンソールエラーの確認');
   // file://で開くと共有テンプレート(data/template.html)のfetchは仕組み上失敗し、
   // ローカル保存データへフォールバックする(想定通りの動作)。そのログは無視する。
   var unexpectedErrors = consoleErrors.filter(function (e) {

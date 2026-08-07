@@ -125,7 +125,8 @@
   // あ行・か行…見出しをパステルカラーで色分けするための行→CSSクラス対応表。
   var ROW_COLOR_CLASS = {
     'あ': 'row-a', 'か': 'row-ka', 'さ': 'row-sa', 'た': 'row-ta', 'な': 'row-na',
-    'は': 'row-ha', 'ま': 'row-ma', 'や': 'row-ya', 'ら': 'row-ra', 'わ': 'row-wa'
+    'は': 'row-ha', 'ま': 'row-ma', 'や': 'row-ya', 'ら': 'row-ra', 'わ': 'row-wa',
+    'ツムラ': 'row-tsumura'
   };
 
   function findDrug(bareName) {
@@ -176,9 +177,10 @@
     row.setAttribute('role', 'button');
     row.setAttribute('aria-pressed', state.selectedName === drug.bareName ? 'true' : 'false');
     row.dataset.action = 'select';
+    var blockCount = collectPrintableBlocks(drug).length;
     row.innerHTML =
       '<span class="drug-title">' + highlightMatch(drug.bareName, query) + '</span>' +
-      (drug.contexts.length > 1 ? '<span class="drug-context-badge">' + drug.contexts.length + '件</span>' : '');
+      (blockCount > 1 ? '<span class="drug-context-badge">' + blockCount + '件</span>' : '');
     li.appendChild(row);
 
     return li;
@@ -280,7 +282,7 @@
         if (row && row !== lastRow) {
           var rowHeader = document.createElement('li');
           rowHeader.className = 'kana-row-header ' + (ROW_COLOR_CLASS[row] || '');
-          rowHeader.textContent = row + '行';
+          rowHeader.textContent = DrugHeadings.rowDisplayLabel(row);
           frag.appendChild(rowHeader);
           lastRow = row;
         }

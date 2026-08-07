@@ -8,7 +8,7 @@ var path = require('path');
 var chromium = require('playwright').chromium;
 
 var INDEX_PATH = 'file://' + path.join(__dirname, '..', 'index.html').replace(/\\/g, '/');
-var SAMPLE_PATH = path.join(__dirname, '..', '薬歴新規薬.html');
+var SAMPLE_PATH = path.join(__dirname, '..', '薬歴新規.html');
 
 (async function main() {
   var browser = await chromium.launch();
@@ -20,7 +20,7 @@ var SAMPLE_PATH = path.join(__dirname, '..', '薬歴新規薬.html');
   await page1.locator('#updateArea summary').click();
   await page1.locator('#fileInput').setInputFiles(SAMPLE_PATH);
   await page1.waitForSelector('.drug-item');
-  await page1.locator('.drug-item', { hasText: 'ロキソプロフェン' }).first().locator('.drug-row').click();
+  await page1.locator('.drug-item', { hasText: 'メコバラミン' }).first().locator('.drug-row').click();
   await page1.waitForSelector('#detailPane .preview-block');
   await page1.mouse.move(0, 0);
   await page1.screenshot({ path: path.join(__dirname, 'design-light-desktop.png'), clip: { x: 0, y: 0, width: 1280, height: 900 } });

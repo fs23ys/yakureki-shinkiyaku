@@ -1,0 +1,7 @@
+{
+  "name": "薬歴新規薬コピペ",
+  "dependencies": {
+    "jsdom": "^29.1.1",
+    "playwright": "^1.61.1"
+  }
+}

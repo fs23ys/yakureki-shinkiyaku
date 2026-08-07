@@ -332,6 +332,42 @@ body {
   border-bottom: 1px solid var(--color-border);
 }
 
+/* あ行・か行…見出しの行別パステルカラー(dataviz色分けガイドラインで検証済み) */
+.kana-row-header.row-a  { color: #d1445f; }
+.kana-row-header.row-ka { color: #2f8fd9; }
+.kana-row-header.row-sa { color: #c66a2a; }
+.kana-row-header.row-ta { color: #1a7fb0; }
+.kana-row-header.row-na { color: #c94f8f; }
+.kana-row-header.row-ha { color: #4f9e5c; }
+.kana-row-header.row-ma { color: #9a5fd1; }
+.kana-row-header.row-ya { color: #8f7a00; }
+.kana-row-header.row-ra { color: #5a6fea; }
+.kana-row-header.row-wa { color: #a05a3a; }
+
+:root[data-theme="dark"] .kana-row-header.row-a  { color: #d1607a; }
+:root[data-theme="dark"] .kana-row-header.row-ka { color: #4a95d9; }
+:root[data-theme="dark"] .kana-row-header.row-sa { color: #d17a3f; }
+:root[data-theme="dark"] .kana-row-header.row-ta { color: #2a90c7; }
+:root[data-theme="dark"] .kana-row-header.row-na { color: #d1568f; }
+:root[data-theme="dark"] .kana-row-header.row-ha { color: #4f9e5f; }
+:root[data-theme="dark"] .kana-row-header.row-ma { color: #a175d1; }
+:root[data-theme="dark"] .kana-row-header.row-ya { color: #a88a1a; }
+:root[data-theme="dark"] .kana-row-header.row-ra { color: #7580d1; }
+:root[data-theme="dark"] .kana-row-header.row-wa { color: #c17a48; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .kana-row-header.row-a  { color: #d1607a; }
+  :root:not([data-theme="light"]) .kana-row-header.row-ka { color: #4a95d9; }
+  :root:not([data-theme="light"]) .kana-row-header.row-sa { color: #d17a3f; }
+  :root:not([data-theme="light"]) .kana-row-header.row-ta { color: #2a90c7; }
+  :root:not([data-theme="light"]) .kana-row-header.row-na { color: #d1568f; }
+  :root:not([data-theme="light"]) .kana-row-header.row-ha { color: #4f9e5f; }
+  :root:not([data-theme="light"]) .kana-row-header.row-ma { color: #a175d1; }
+  :root:not([data-theme="light"]) .kana-row-header.row-ya { color: #a88a1a; }
+  :root:not([data-theme="light"]) .kana-row-header.row-ra { color: #7580d1; }
+  :root:not([data-theme="light"]) .kana-row-header.row-wa { color: #c17a48; }
+}
+
 .drug-item {
   border-bottom: 1px solid var(--color-border);
 }

@@ -122,6 +122,12 @@
     return null;
   }
 
+  // あ行・か行…見出しをパステルカラーで色分けするための行→CSSクラス対応表。
+  var ROW_COLOR_CLASS = {
+    'あ': 'row-a', 'か': 'row-ka', 'さ': 'row-sa', 'た': 'row-ta', 'な': 'row-na',
+    'は': 'row-ha', 'ま': 'row-ma', 'や': 'row-ya', 'ら': 'row-ra', 'わ': 'row-wa'
+  };
+
   function findDrug(bareName) {
     for (var i = 0; i < state.drugList.length; i++) {
       if (state.drugList[i].bareName === bareName) return state.drugList[i];
@@ -273,7 +279,7 @@
         var row = DrugHeadings.kanaRowFor(d.bareName);
         if (row && row !== lastRow) {
           var rowHeader = document.createElement('li');
-          rowHeader.className = 'kana-row-header';
+          rowHeader.className = 'kana-row-header ' + (ROW_COLOR_CLASS[row] || '');
           rowHeader.textContent = row + '行';
           frag.appendChild(rowHeader);
           lastRow = row;

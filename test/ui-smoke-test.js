@@ -40,7 +40,7 @@ var INDEX_PATH = 'file://' + path.join(__dirname, '..', 'index.html').replace(/\
 
   console.log('');
   console.log('[2] サンプルHTMLファイルを手動で取り込む(あ行・か行見出し付きの薬品名一覧になる)');
-  var SAMPLE_PATH = path.join(__dirname, '..', '薬歴新規.html');
+  var SAMPLE_PATH = path.join(__dirname, '..', '新規2026.08.09.html');
   await page.locator('#updateArea summary').click();
   await page.locator('#fileInput').setInputFiles(SAMPLE_PATH);
   await page.waitForSelector('.drug-item');

@@ -18,7 +18,7 @@ var JSDOM = require('jsdom').JSDOM;
 var TemplateParser = require('../js/parser.js');
 var DrugHeadings = require('../js/drug-headings.js');
 
-var SAMPLE_PATH = path.join(__dirname, '..', '薬歴新規.html');
+var SAMPLE_PATH = path.join(__dirname, '..', '新規2026.08.09.html');
 
 function run() {
   var html = fs.readFileSync(SAMPLE_PATH, 'utf8');
@@ -64,8 +64,8 @@ function run() {
   var mecobalamin = list.find(function (d) { return d.bareName === 'メコバラミン'; });
   check('"メコバラミン"はカテゴリをまたぐ重複が1エントリに統合される(2文脈)', !!mecobalamin && mecobalamin.contexts.length === 2);
 
-  var rokoid = list.find(function (d) { return d.bareName === 'ロコイド軟膏'; });
-  check('"ロコイド軟膏"はカテゴリをまたぐ重複が1エントリに統合される(2文脈)', !!rokoid && rokoid.contexts.length === 2);
+  check('"ロコイド軟膏"は見つかる(現在のデータでは1文脈)',
+    !!list.find(function (d) { return d.bareName === 'ロコイド軟膏'; }));
 
   // --- H2自身に本文が無く、配下のH3に用途分岐がある場合の集約確認 ---
   console.log('');

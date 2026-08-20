@@ -40,16 +40,16 @@ var INDEX_PATH = 'file://' + path.join(__dirname, '..', 'index.html').replace(/\
 
   console.log('');
   console.log('[2] サンプルHTMLファイルを手動で取り込む(あ行・か行見出し付きの薬品名一覧になる)');
-  var SAMPLE_PATH = path.join(__dirname, '..', '新規2026.08.09.html');
+  var SAMPLE_PATH = path.join(__dirname, '..', '2026.08.20 新規index.html');
   await page.locator('#updateArea summary').click();
   await page.locator('#fileInput').setInputFiles(SAMPLE_PATH);
   await page.waitForSelector('.drug-item');
   var drugCount = await page.locator('.drug-item').count();
   console.log('  表示された薬品件数: ' + drugCount);
-  check('薬品エントリが99件表示される(重複統合後)', drugCount === 99);
+  check('薬品エントリが102件表示される(重複統合後)', drugCount === 102);
   var rowHeaderCount = await page.locator('.kana-row-header').count();
   console.log('  あ行・か行…見出しの件数: ' + rowHeaderCount);
-  check('行見出しが8件(あ→か→さ→た→は→ま→ら→ツムラ)', rowHeaderCount === 8);
+  check('行見出しが9件(あ→か→さ→た→な→は→ま→ら→ツムラ)', rowHeaderCount === 9);
   var firstRowHeaderText = await page.locator('.kana-row-header').first().textContent();
   check('最初の行見出しが「あ行」', firstRowHeaderText.indexOf('あ行') !== -1);
   var lastRowHeaderText = await page.locator('.kana-row-header').last().textContent();
@@ -143,7 +143,7 @@ var INDEX_PATH = 'file://' + path.join(__dirname, '..', 'index.html').replace(/\
   await page.locator('#searchInput').fill('');
   await page.waitForTimeout(100);
   var rowHeaderCountAfterClear = await page.locator('.kana-row-header').count();
-  check('検索クリアで行見出しが8件に戻る', rowHeaderCountAfterClear === 8);
+  check('検索クリアで行見出しが9件に戻る', rowHeaderCountAfterClear === 9);
 
   console.log('');
   console.log('[9] ダークモード切り替え');
@@ -158,7 +158,7 @@ var INDEX_PATH = 'file://' + path.join(__dirname, '..', 'index.html').replace(/\
   var themeAfterReload = await page.evaluate(function () { return document.documentElement.getAttribute('data-theme'); });
   check('リロードしてもダークモード設定が保持される', themeAfterReload === themeAfter);
   check('リロード後、localStorageから薬品一覧が復元される(file://のためfetchは失敗する想定)',
-    await page.locator('.drug-item').count() === 99);
+    await page.locator('.drug-item').count() === 102);
 
   console.log('');
   console.log('[10] コンソールエラーの確認');

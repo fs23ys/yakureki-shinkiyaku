@@ -8,7 +8,7 @@ var path = require('path');
 var chromium = require('playwright').chromium;
 
 var INDEX_PATH = 'file://' + path.join(__dirname, '..', 'index.html').replace(/\\/g, '/');
-var SAMPLE_PATH = path.join(__dirname, '..', '新規2026.08.09.html');
+var SAMPLE_PATH = path.join(__dirname, '..', '2026.08.20 新規index.html');
 
 (async function main() {
   var browser = await chromium.launch();

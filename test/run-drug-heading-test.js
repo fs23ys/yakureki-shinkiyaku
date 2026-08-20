@@ -18,7 +18,7 @@ var JSDOM = require('jsdom').JSDOM;
 var TemplateParser = require('../js/parser.js');
 var DrugHeadings = require('../js/drug-headings.js');
 
-var SAMPLE_PATH = path.join(__dirname, '..', '新規2026.08.09.html');
+var SAMPLE_PATH = path.join(__dirname, '..', '2026.08.20 新規index.html');
 
 function run() {
   var html = fs.readFileSync(SAMPLE_PATH, 'utf8');

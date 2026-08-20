@@ -18,7 +18,7 @@ var JSDOM = require('jsdom').JSDOM;
 var TemplateParser = require('../js/parser.js');
 var DrugHeadings = require('../js/drug-headings.js');
 
-var SAMPLE_PATH = path.join(__dirname, '..', '2026.08.20 新規index.html');
+var SAMPLE_PATH = path.join(__dirname, '..', '2026.08.21.html');
 
 function run() {
   var html = fs.readFileSync(SAMPLE_PATH, 'utf8');
@@ -61,9 +61,8 @@ function run() {
   var list = DrugHeadings.buildDrugList(headings);
   console.log('  薬品名エントリ数(重複統合後): ' + list.length);
 
-  var mecobalamin = list.find(function (d) { return d.bareName === 'メコバラミン'; });
-  check('"メコバラミン"はカテゴリをまたぐ重複が1エントリに統合される(2文脈)', !!mecobalamin && mecobalamin.contexts.length === 2);
-
+  check('"メコバラミン"は見つかる(現在のデータでは1文脈)',
+    !!list.find(function (d) { return d.bareName === 'メコバラミン'; }));
   check('"ロコイド軟膏"は見つかる(現在のデータでは1文脈)',
     !!list.find(function (d) { return d.bareName === 'ロコイド軟膏'; }));
 
@@ -83,10 +82,10 @@ function run() {
   }
 
   var mecobalaminHeading = drugHeadings.find(function (d) { return d.bareName === 'メコバラミン' && byId[d.id].block === ''; });
-  check('"メコバラミン"(用途分岐が3件あるほう)が見つかる', !!mecobalaminHeading);
+  check('"メコバラミン"(用途分岐が複数あるほう)が見つかる', !!mecobalaminHeading);
   if (mecobalaminHeading) {
     var hMeco = byId[mecobalaminHeading.id];
-    check('メコバラミンのeffectiveBlocksが3件(手のしびれ／痛み／VB12不足)に分かれる', hMeco.effectiveBlocks.length === 3);
+    check('メコバラミンのeffectiveBlocksが4件(めまい／手のしびれ／痛み／VB12不足)に分かれる', hMeco.effectiveBlocks.length === 4);
     check('各ブロックが独立した##S##〜##OP##になっている(混ざらない)',
       hMeco.effectiveBlocks.every(function (b) { return (b.block.match(/##S##/g) || []).length === 1; }));
   }

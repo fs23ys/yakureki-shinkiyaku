@@ -40,13 +40,13 @@ var INDEX_PATH = 'file://' + path.join(__dirname, '..', 'index.html').replace(/\
 
   console.log('');
   console.log('[2] サンプルHTMLファイルを手動で取り込む(あ行・か行見出し付きの薬品名一覧になる)');
-  var SAMPLE_PATH = path.join(__dirname, '..', '2026.08.20 新規index.html');
+  var SAMPLE_PATH = path.join(__dirname, '..', '2026.08.21.html');
   await page.locator('#updateArea summary').click();
   await page.locator('#fileInput').setInputFiles(SAMPLE_PATH);
   await page.waitForSelector('.drug-item');
   var drugCount = await page.locator('.drug-item').count();
   console.log('  表示された薬品件数: ' + drugCount);
-  check('薬品エントリが102件表示される(重複統合後)', drugCount === 102);
+  check('薬品エントリが103件表示される(重複統合後)', drugCount === 103);
   var rowHeaderCount = await page.locator('.kana-row-header').count();
   console.log('  あ行・か行…見出しの件数: ' + rowHeaderCount);
   check('行見出しが9件(あ→か→さ→た→な→は→ま→ら→ツムラ)', rowHeaderCount === 9);
@@ -84,7 +84,7 @@ var INDEX_PATH = 'file://' + path.join(__dirname, '..', 'index.html').replace(/\
 
   console.log('');
   console.log('[5] H2自身に本文が無く、配下のH3に用途分岐が複数ある薬品(メコバラミン)を選択すると、見出し付きで分けて表示される');
-  console.log('    (メコバラミンは耳鼻科用薬(単一ブロック)とビタミン剤(3分岐)にまたがる重複薬品でもあるため、合計4ブロックになる)');
+  console.log('    (めまい／手のしびれ／痛み／VB12不足の4分岐)');
   await page.locator('#searchInput').fill('メコバラミン');
   await page.waitForTimeout(100);
   var mecoRow = page.locator('.drug-item', { hasText: 'メコバラミン' }).first();
@@ -94,13 +94,14 @@ var INDEX_PATH = 'file://' + path.join(__dirname, '..', 'index.html').replace(/\
   await page.waitForSelector('#detailPane .preview-block');
   var mecoBlockCount = await page.locator('#detailPane .preview-block').count();
   console.log('  メコバラミンのブロック数: ' + mecoBlockCount);
-  check('耳鼻科用薬(1)+（１）手のしびれ／（２）痛み／（３）VB12不足(3)の合計4ブロックに分かれる', mecoBlockCount === 4);
+  check('（１）めまい／（２）手のしびれ／（３）痛み／（４）VB12不足の合計4ブロックに分かれる', mecoBlockCount === 4);
   var blockTitles = await page.locator('#detailPane .preview-block-title').allTextContents();
   console.log('  ブロックラベル: ' + blockTitles.join(' / '));
-  check('各ブロックのラベル(「（１）手のしびれ」等)がコピー内容の上に表示される',
+  check('各ブロックのラベル(「（１）めまい」等)がコピー内容の上に表示される',
     blockTitles.some(function (t) { return t.indexOf('（１）') !== -1; }) &&
     blockTitles.some(function (t) { return t.indexOf('（２）') !== -1; }) &&
-    blockTitles.some(function (t) { return t.indexOf('（３）') !== -1; }));
+    blockTitles.some(function (t) { return t.indexOf('（３）') !== -1; }) &&
+    blockTitles.some(function (t) { return t.indexOf('（４）') !== -1; }));
 
   console.log('');
   console.log('[5.5] ブロックごとに独立してコピーできる(混ざらない)');
@@ -158,7 +159,7 @@ var INDEX_PATH = 'file://' + path.join(__dirname, '..', 'index.html').replace(/\
   var themeAfterReload = await page.evaluate(function () { return document.documentElement.getAttribute('data-theme'); });
   check('リロードしてもダークモード設定が保持される', themeAfterReload === themeAfter);
   check('リロード後、localStorageから薬品一覧が復元される(file://のためfetchは失敗する想定)',
-    await page.locator('.drug-item').count() === 102);
+    await page.locator('.drug-item').count() === 103);
 
   console.log('');
   console.log('[10] コンソールエラーの確認');

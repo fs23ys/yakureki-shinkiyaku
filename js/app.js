@@ -14,7 +14,8 @@
     headings: [],
     drugList: [],
     selectedName: null,
-    filter: ''
+    filter: '',
+    rowFilter: null
   };
 
   function loadFromStorage() {
@@ -42,6 +43,7 @@
   var listEl = document.getElementById('headingList');
   var emptyEl = document.getElementById('emptyMessage');
   var searchInput = document.getElementById('searchInput');
+  var kanaNavEl = document.getElementById('kanaNav');
   var statusEl = document.getElementById('statusMessage');
   var fileInput = document.getElementById('fileInput');
   var dropzone = document.getElementById('dropzone');
@@ -140,6 +142,44 @@
     'は': 'row-ha', 'ま': 'row-ma', 'や': 'row-ya', 'ら': 'row-ra', 'わ': 'row-wa',
     'ツムラ': 'row-tsumura'
   };
+
+  // 検索ボックス下の「あ・か・さ…」行ジャンプ(絞り込み)ボタンの並び順とラベル。
+  // ツムラの漢方薬は「他」ボタンにまとめる。
+  var ROW_NAV_ORDER = ['あ', 'か', 'さ', 'た', 'な', 'は', 'ま', 'や', 'ら', 'わ', 'ツムラ'];
+  var ROW_NAV_LABEL = {
+    'あ': 'あ', 'か': 'か', 'さ': 'さ', 'た': 'た', 'な': 'な',
+    'は': 'は', 'ま': 'ま', 'や': 'や', 'ら': 'ら', 'わ': 'わ', 'ツムラ': '他'
+  };
+
+  // 現在のデータに実在する行だけボタンを有効化し、該当薬品が無い行はグレーアウトする。
+  function buildKanaNav() {
+    var present = {};
+    state.drugList.forEach(function (d) {
+      var row = DrugHeadings.kanaRowFor(d.bareName);
+      if (row) present[row] = true;
+    });
+
+    kanaNavEl.innerHTML = '';
+    ROW_NAV_ORDER.forEach(function (row) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'kana-nav-btn ' + (ROW_COLOR_CLASS[row] || '') + (state.rowFilter === row ? ' active' : '');
+      btn.textContent = ROW_NAV_LABEL[row] || row;
+      btn.dataset.row = row;
+      btn.setAttribute('aria-pressed', state.rowFilter === row ? 'true' : 'false');
+      if (!present[row]) btn.disabled = true;
+      kanaNavEl.appendChild(btn);
+    });
+  }
+
+  kanaNavEl.addEventListener('click', function (e) {
+    var btn = e.target.closest('.kana-nav-btn');
+    if (!btn || btn.disabled) return;
+    var row = btn.dataset.row;
+    state.rowFilter = state.rowFilter === row ? null : row;
+    buildKanaNav();
+    render();
+  });
 
   function findDrug(bareName) {
     for (var i = 0; i < state.drugList.length; i++) {
@@ -276,12 +316,20 @@
       return;
     }
 
-    var filtered = query
-      ? state.drugList.filter(function (d) { return matchesQuery(d.bareName, query); })
-      : state.drugList;
+    var filtered = state.drugList.filter(function (d) {
+      if (query && !matchesQuery(d.bareName, query)) return false;
+      if (state.rowFilter && DrugHeadings.kanaRowFor(d.bareName) !== state.rowFilter) return false;
+      return true;
+    });
 
     if (filtered.length === 0) {
-      emptyEl.textContent = '「' + query + '」に一致する薬品名が見つかりません。';
+      if (query) {
+        emptyEl.textContent = '「' + query + '」に一致する薬品名が見つかりません。';
+      } else if (state.rowFilter) {
+        emptyEl.textContent = DrugHeadings.rowDisplayLabel(state.rowFilter) + 'に一致する薬品名が見つかりません。';
+      } else {
+        emptyEl.textContent = '薬品名が見つかりません。';
+      }
       return;
     }
     emptyEl.textContent = '';
@@ -394,7 +442,9 @@
       state.drugList = DrugHeadings.buildDrugList(headings);
       state.selectedName = null;
       state.filter = '';
+      state.rowFilter = null;
       searchInput.value = '';
+      buildKanaNav();
       render();
       renderDetailPane();
       updateArea.open = false;
@@ -481,6 +531,7 @@
         } else {
           setStatus('共有テンプレートを取得できませんでした。オフラインの場合は接続を確認するか、下の「更新」からHTMLファイルを取り込んでください。', 'error');
         }
+        buildKanaNav();
         render();
         renderDetailPane();
       });

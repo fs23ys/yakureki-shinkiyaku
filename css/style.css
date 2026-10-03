@@ -348,6 +348,60 @@ body {
 .kana-row-header.row-wa      { background: #a05a3a; }
 .kana-row-header.row-tsumura { background: #7a6a1f; }
 
+/* あ・か・さ…行ジャンプ(絞り込み)ボタン。色はkana-row-headerと同じ検証済みパレットを使い、
+   通常時は白地+色文字、選択中は色塗り+白文字、該当薬品が無い行はグレーアウトして押せなくする。 */
+.kana-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: -0.5rem 0 1rem;
+}
+
+.kana-nav-btn {
+  flex: none;
+  min-width: 2.3rem;
+  height: 2.3rem;
+  padding: 0 0.5rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--row-color, var(--color-border));
+  background: var(--color-surface);
+  color: var(--row-color, var(--color-text));
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.kana-nav-btn:hover:not(:disabled):not(.active) {
+  background: var(--color-accent-soft);
+}
+
+.kana-nav-btn.active {
+  background: var(--row-color, var(--color-accent));
+  color: #fff;
+}
+
+.kana-nav-btn:disabled {
+  border-color: var(--color-border);
+  color: var(--color-muted);
+  background: var(--color-surface);
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.kana-nav-btn.row-a       { --row-color: #d1445f; }
+.kana-nav-btn.row-ka      { --row-color: #2f8fd9; }
+.kana-nav-btn.row-sa      { --row-color: #c66a2a; }
+.kana-nav-btn.row-ta      { --row-color: #1a7fb0; }
+.kana-nav-btn.row-na      { --row-color: #c94f8f; }
+.kana-nav-btn.row-ha      { --row-color: #4f9e5c; }
+.kana-nav-btn.row-ma      { --row-color: #9a5fd1; }
+.kana-nav-btn.row-ya      { --row-color: #8f7a00; }
+.kana-nav-btn.row-ra      { --row-color: #5a6fea; }
+.kana-nav-btn.row-wa      { --row-color: #a05a3a; }
+.kana-nav-btn.row-tsumura { --row-color: #7a6a1f; }
+
 .drug-item {
   border-bottom: 1px solid var(--color-border);
 }

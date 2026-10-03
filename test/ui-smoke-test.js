@@ -147,6 +147,32 @@ var INDEX_PATH = 'file://' + path.join(__dirname, '..', 'index.html').replace(/\
   check('検索クリアで行見出しが9件に戻る', rowHeaderCountAfterClear === 9);
 
   console.log('');
+  console.log('[8.5] あ・か・さ…行ジャンプ(絞り込み)ボタン');
+  var kanaNavBtnCount = await page.locator('.kana-nav-btn').count();
+  console.log('  行ボタンの件数: ' + kanaNavBtnCount);
+  check('行ボタンが11件(あ・か・さ・た・な・は・ま・や・ら・わ・他)', kanaNavBtnCount === 11);
+  var yaBtn = page.locator('.kana-nav-btn', { hasText: 'や' });
+  var waBtn = page.locator('.kana-nav-btn', { hasText: 'わ' });
+  check('「や」ボタンは該当薬品が無いためグレーアウト(disabled)', await yaBtn.isDisabled());
+  check('「わ」ボタンは該当薬品が無いためグレーアウト(disabled)', await waBtn.isDisabled());
+  var taNavBtn = page.locator('.kana-nav-btn', { hasText: 'た' });
+  check('「た」ボタンは該当薬品があるため押せる', await taNavBtn.isEnabled());
+  await taNavBtn.click();
+  await page.waitForTimeout(100);
+  var taFilteredCount = await page.locator('.drug-item').count();
+  console.log('  「た」で絞り込んだ件数: ' + taFilteredCount);
+  var allTaRow = await page.evaluate(function () {
+    var names = Array.prototype.map.call(document.querySelectorAll('.drug-item .drug-title'), function (el) { return el.textContent; });
+    return names.length > 0 && names.every(function (t) { return DrugHeadings.kanaRowFor(t) === 'た'; });
+  });
+  check('「た」行の薬品だけに絞り込まれる', taFilteredCount > 0 && allTaRow);
+  check('押した「た」ボタンにactiveクラスが付く', await taNavBtn.evaluate(function (el) { return el.classList.contains('active'); }));
+  await taNavBtn.click();
+  await page.waitForTimeout(100);
+  var afterToggleOffCount = await page.locator('.drug-item').count();
+  check('もう一度押すと絞り込みが解除され全件(103件)に戻る', afterToggleOffCount === 103);
+
+  console.log('');
   console.log('[9] ダークモード切り替え');
   var themeBefore = await page.evaluate(function () { return document.documentElement.getAttribute('data-theme'); });
   await page.locator('#themeToggle').click();

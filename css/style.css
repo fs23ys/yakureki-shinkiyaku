@@ -6,8 +6,8 @@
   --color-border: #f1def0;
   --color-text: #3a2a3c;
   --color-muted: #92809a;
-  --color-accent: #c96aa6;
-  --color-accent-soft: #fbe6f2;
+  --color-accent: #3f7a65;
+  --color-accent-soft: #e6f1ec;
   --color-success: #2e9e5b;
   --color-success-bg: #e6f7ec;
   --color-error: #d1477a;
@@ -26,8 +26,8 @@
   --color-border: #4a3a50;
   --color-text: #f3e8f1;
   --color-muted: #baa3c1;
-  --color-accent: #e29bd0;
-  --color-accent-soft: #4a3350;
+  --color-accent: #7fc29c;
+  --color-accent-soft: #29392f;
   --color-success: #8fdba8;
   --color-success-bg: #24382c;
   --color-error: #f2a0c0;
@@ -43,8 +43,8 @@
     --color-border: #4a3a50;
     --color-text: #f3e8f1;
     --color-muted: #baa3c1;
-    --color-accent: #e29bd0;
-    --color-accent-soft: #4a3350;
+    --color-accent: #7fc29c;
+    --color-accent-soft: #29392f;
     --color-success: #8fdba8;
     --color-success-bg: #24382c;
     --color-error: #f2a0c0;
@@ -75,7 +75,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--header-gap);
-  box-shadow: 0 2px 6px rgba(201, 106, 166, 0.08);
+  box-shadow: 0 2px 6px rgba(63, 122, 101, 0.08);
 }
 
 .search-input {
@@ -269,7 +269,7 @@ body {
   background: var(--color-card-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  box-shadow: 0 3px 10px rgba(201, 106, 166, 0.1);
+  box-shadow: 0 3px 10px rgba(63, 122, 101, 0.1);
   padding: 1.1rem 1.2rem;
 }
 
@@ -403,15 +403,24 @@ body {
 .kana-nav-btn.row-tsumura { --row-color: #7a6a1f; }
 
 .drug-item {
-  border-bottom: 1px solid var(--color-border);
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-bottom: 0.55rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.drug-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .drug-row {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.85rem 0.75rem;
-  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
   cursor: pointer;
 }
 
@@ -434,16 +443,20 @@ body {
   flex: none;
   font-size: 0.7rem;
   font-weight: 700;
-  color: #fff;
-  background: var(--color-muted);
-  border-radius: var(--radius-sm);
-  padding: 0.15rem 0.5rem;
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
 }
 
 .drug-title mark {
   background: #ffe27a;
   color: #1f1f1f;
   border-radius: 2px;
+}
+
+.drug-item.selected {
+  border-color: var(--color-accent);
 }
 
 .drug-item.selected .drug-row {

@@ -177,6 +177,10 @@
     if (!btn || btn.disabled) return;
     var row = btn.dataset.row;
     state.rowFilter = state.rowFilter === row ? null : row;
+    // 検索中に行ボタンを押すと「検索語に一致、かつその行」という分かりにくい絞り込みに
+    // なってしまうため、行ボタンを押したら検索語はクリアする(両者は排他的に使う)。
+    state.filter = '';
+    searchInput.value = '';
     buildKanaNav();
     render();
   });
@@ -432,6 +436,11 @@
 
   searchInput.addEventListener('input', function () {
     state.filter = searchInput.value;
+    // 検索語を入力したら、行ジャンプボタンの絞り込みは解除する(両者は排他的に使う)。
+    if (state.rowFilter) {
+      state.rowFilter = null;
+      buildKanaNav();
+    }
     render();
   });
 

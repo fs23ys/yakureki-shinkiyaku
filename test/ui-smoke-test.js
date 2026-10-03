@@ -173,6 +173,33 @@ var INDEX_PATH = 'file://' + path.join(__dirname, '..', 'index.html').replace(/\
   check('もう一度押すと絞り込みが解除され全件(103件)に戻る', afterToggleOffCount === 103);
 
   console.log('');
+  console.log('[8.6] 行ボタンと検索は排他的に動く(片方を使うともう片方は解除される)');
+  var aNavBtn = page.locator('.kana-nav-btn', { hasText: 'あ' });
+  await aNavBtn.click();
+  await page.waitForTimeout(100);
+  check('「あ」ボタンを押すとactiveになる', await aNavBtn.evaluate(function (el) { return el.classList.contains('active'); }));
+  await page.locator('#searchInput').fill('ろ');
+  await page.waitForTimeout(100);
+  var roCount = await page.locator('.drug-item').count();
+  var roNames = await page.locator('.drug-item .drug-title').allTextContents();
+  console.log('  「あ」行絞り込み中に「ろ」で検索した件数: ' + roCount);
+  check('「あ」行ボタンが有効なまま検索しても、検索語に一致する薬品(ロキソプロフェン等)がちゃんと出る',
+    roCount > 0 && roNames.some(function (t) { return t.indexOf('ロキソプロフェン') !== -1; }));
+  check('検索すると「あ」ボタンのactiveは解除される', !(await aNavBtn.evaluate(function (el) { return el.classList.contains('active'); })));
+
+  await taNavBtn.click();
+  await page.waitForTimeout(100);
+  check('行ボタンを押すと検索欄がクリアされる', (await page.locator('#searchInput').inputValue()) === '');
+  var taAgainCount = await page.locator('.drug-item').count();
+  var taAgainAllTaRow = await page.evaluate(function () {
+    var names = Array.prototype.map.call(document.querySelectorAll('.drug-item .drug-title'), function (el) { return el.textContent; });
+    return names.length > 0 && names.every(function (t) { return DrugHeadings.kanaRowFor(t) === 'た'; });
+  });
+  check('検索語クリア後、「た」行だけの絞り込みに戻る', taAgainCount > 0 && taAgainAllTaRow);
+  await taNavBtn.click();
+  await page.waitForTimeout(100);
+
+  console.log('');
   console.log('[9] ダークモード切り替え');
   var themeBefore = await page.evaluate(function () { return document.documentElement.getAttribute('data-theme'); });
   await page.locator('#themeToggle').click();

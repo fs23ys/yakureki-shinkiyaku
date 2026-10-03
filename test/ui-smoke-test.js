@@ -9,6 +9,7 @@
  */
 'use strict';
 
+var fs = require('fs');
 var path = require('path');
 var chromium = require('playwright').chromium;
 
@@ -34,15 +35,17 @@ var INDEX_PATH = 'file://' + path.join(__dirname, '..', 'index.html').replace(/\
     if (!condition) failures.push(desc);
   }
 
-  console.log('[1] index.html を開く(file://なのでdata/template.htmlのfetchは失敗するが、取り込み自体はローカル保存フォールバックか手動取り込みで検証する)');
+  console.log('[1] index.html を開く(file://なのでdata/template.htmlのfetchは失敗するが、取り込み自体はローカル保存フォールバックかテスト用フックで検証する)');
   await page.goto(INDEX_PATH);
   await page.waitForTimeout(300);
 
   console.log('');
-  console.log('[2] サンプルHTMLファイルを手動で取り込む(あ行・か行見出し付きの薬品名一覧になる)');
+  console.log('[2] サンプルHTMLをテスト用フック(window.__testImportHtml)経由で取り込む(あ行・か行見出し付きの薬品名一覧になる)');
   var SAMPLE_PATH = path.join(__dirname, '..', '2026.08.21.html');
-  await page.locator('#updateArea summary').click();
-  await page.locator('#fileInput').setInputFiles(SAMPLE_PATH);
+  var sampleHtml = fs.readFileSync(SAMPLE_PATH, 'utf8');
+  await page.evaluate(function (html) {
+    window.__testImportHtml(html, 'テスト用サンプル');
+  }, sampleHtml);
   await page.waitForSelector('.drug-item');
   var drugCount = await page.locator('.drug-item').count();
   console.log('  表示された薬品件数: ' + drugCount);

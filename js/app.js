@@ -398,7 +398,7 @@
     actionEl.click();
   });
 
-  // コピー ボタン自体も1秒間だけ「コピーしました!」表示に変える(クリックした実感を持たせる)。
+  // コピー ボタン自体も2.5秒間だけ「コピーしました!」表示に変える(クリックした実感を持たせる)。
   function showCopyFeedback(btn) {
     if (btn._copyFeedbackTimer) {
       clearTimeout(btn._copyFeedbackTimer);
@@ -411,7 +411,7 @@
       btn.textContent = btn._copyFeedbackOriginalText;
       btn.classList.remove('copy-btn-success');
       btn._copyFeedbackTimer = null;
-    }, 1000);
+    }, 2500);
   }
 
   detailPaneEl.addEventListener('click', function (e) {

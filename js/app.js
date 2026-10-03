@@ -439,7 +439,8 @@
     render();
   });
 
-  function importHtml(htmlString, sourceLabel) {
+  function importHtml(htmlString, sourceLabel, opts) {
+    opts = opts || {};
     try {
       var headings = TemplateParser.parseTemplateHtml(htmlString);
       state.headings = headings;
@@ -454,7 +455,13 @@
 
       var saved = saveToStorage(headings);
       if (saved) {
-        setStatus(sourceLabel + 'を取り込みました(薬品' + state.drugList.length + '件)。', 'success');
+        // 通常の起動時読み込みは、成功しても画面を汚さないよう通知しない
+        // (失敗時だけ下のcatchやエラー分岐で知らせる)。
+        if (!opts.silentSuccess) {
+          setStatus(sourceLabel + 'を取り込みました(薬品' + state.drugList.length + '件)。', 'success');
+        } else {
+          setStatus('', null);
+        }
       } else {
         setStatus(sourceLabel + 'を取り込みましたが、保存に失敗しました(ブラウザのストレージ容量制限などが考えられます)。今回開いている間は利用できますが、次回は復元されません。', 'error');
       }
@@ -471,14 +478,13 @@
   // (data/template.html)を自動取得する。取得できない場合(オフライン・file://で
   // 直接開いた場合など)のみ、以前ブラウザに保存された内容にフォールバックする。
   (function restoreOnLoad() {
-    setStatus('共有テンプレートを読み込み中…', null);
     fetch(TEMPLATE_URL, { cache: 'no-store' })
       .then(function (res) {
         if (!res.ok) throw new Error('HTTP ' + res.status);
         return res.text();
       })
       .then(function (html) {
-        importHtml(html, '共有テンプレート');
+        importHtml(html, '共有テンプレート', { silentSuccess: true });
       })
       .catch(function () {
         var restored = loadFromStorage();
